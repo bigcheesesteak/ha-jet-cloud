@@ -10,4 +10,7 @@ Features:
 
 **Important**: Maintain the default 60-second polling interval to avoid API rate limiting.
 
+---
+**⚠️ DISCLAIMER:** This is an unofficial, community-developed integration. It is not affiliated with, endorsed by, sponsored by, or supported by Jiayu Energy Technology Co., Ltd. (JET). "JET" and "JET Cloud" are trademarks of their respective owners. By using this integration, you accept that it relies on undocumented APIs that may change or break at any time.
+
 *Developer Note: This project was built with AI assistance to accelerate payload parsing and boilerplate generation. All code was manually reviewed, refined, and tested by a developer to ensure it meets strict Home Assistant standards.*

@@ -2,6 +2,13 @@
 
 A custom integration for Home Assistant to monitor JET Cloud microinverters. This integration connects directly to the JET Cloud API to pull real-time telemetry, including voltage, current, and total energy production.
 
+## ⚠️ Disclaimer
+**This is an unofficial, community-developed project.** This integration is not affiliated with, authorized by, endorsed by, or in any way officially connected with Jiayu Energy Technology Co., Ltd. (JET) or any of its subsidiaries or affiliates. The names "JET", "JET Cloud", and related trademarks are the property of their respective owners.
+
+This software is provided "as is", without warranty of any kind. It relies on undocumented, reverse-engineered cloud APIs. The manufacturer may alter or restrict access to these APIs at any time, which could cause this integration to stop functioning. **Use at your own risk.**
+
+---
+
 ## Features
 * **Energy Dashboard Ready**: Provides a strictly accumulating `Energy Generated Today` sensor.
 * **Granular Telemetry**: Tracks individual PV string performance (Voltage, Current, Power).
