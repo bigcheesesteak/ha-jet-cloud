@@ -1,0 +1,9 @@
+{
+    "domain": "jet_cloud",
+    "name": "JET Cloud Inverter",
+    "codeowners": [],
+    "config_flow": true,
+    "iot_class": "cloud_polling",
+    "requirements": [],
+    "version": "1.0.0"
+  }
