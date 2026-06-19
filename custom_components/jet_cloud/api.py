@@ -1,10 +1,13 @@
 import hashlib
+import logging
 import re
 from datetime import datetime
 from typing import Dict, Any, List, Optional
 import aiohttp
 
 from .const import BASE_URL
+
+_LOGGER: logging.Logger = logging.getLogger(__name__)
 
 class JetCloudApiError(Exception):
     pass
@@ -79,6 +82,15 @@ class JetCloudClient:
                     
                 if response.status != 200:
                     raise JetCloudApiError(f"HTTP error {response.status} calling {endpoint}")
+
+                # Handle case where server serves HTML with HTTP 200 due to dead session/token
+                resp_content_type: str = response.headers.get("Content-Type", "")
+                if "application/json" not in resp_content_type:
+                    if retry:
+                        _LOGGER.warning("Received non-JSON response from %s. Forcing token refresh.", endpoint)
+                        self.token = None
+                        return await self._async_request(endpoint, payload, content_type, retry=False)
+                    raise JetCloudApiError(f"Unexpected text/html response payload from {endpoint}")
 
                 data: Dict[str, Any] = await response.json()
                 
