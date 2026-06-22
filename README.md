@@ -1,6 +1,6 @@
 # Home Assistant JET Cloud Integration
 
-![](https://img.shields.io/badge/dynamic/json?color=41BDF5&logo=home-assistant&label=integration%20usage&suffix=%20installs&cacheSeconds=15600&url=https://analytics.home-assistant.io/custom_integrations.json&query=$.ha_jet_cloud.total)
+[![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/custom-components/hacs) ![](https://img.shields.io/badge/dynamic/json?color=41BDF5&logo=home-assistant&label=Integration%20usage&suffix=%20installs&cacheSeconds=15600&url=https://analytics.home-assistant.io/custom_integrations.json&query=$.ha_jet_cloud.total)
 
 A custom integration for Home Assistant to monitor JET Cloud microinverters. This integration connects directly to the JET Cloud API to pull real-time telemetry, including voltage, current, and total energy production.
 
@@ -17,8 +17,10 @@ This software is provided "as is", without warranty of any kind. It relies on un
 * **UI Configuration**: Fully supports Home Assistant Config Flow. No YAML required.
 
 ## Installation
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=bigcheesesteak&repository=ha-jet-cloud)
 
 ### Method 1: HACS (Recommended)
+
 1. Open Home Assistant and navigate to HACS.
 2. Click on "Integrations".
 3. Click the three dots in the top right corner and select "Custom repositories".
@@ -32,6 +34,7 @@ This software is provided "as is", without warranty of any kind. It relies on un
 3. Restart Home Assistant.
 
 ## Configuration
+[![Open your Home Assistant instance and start setting up a new integration.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=jet_cloud)
 1. Navigate to Settings > Devices & Services.
 2. Click "Add Integration".
 3. Search for "JET Cloud".
