@@ -1,0 +1,25 @@
+name: Release Integration
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  release-zip:
+    name: Build and Upload Release Asset
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Package Integration Directory
+        run: |
+          cd custom_components
+          zip -r ../ha-jet-cloud.zip ha_jet_cloud/
+
+      - name: Upload Zip to Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ha-jet-cloud.zip

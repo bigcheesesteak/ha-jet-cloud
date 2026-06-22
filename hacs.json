@@ -1,7 +1,8 @@
 {
     "name": "JET Cloud Inverter",
     "render_readme": true,
-    "filename": "jet_cloud",
+    "zip_release": true,
+    "filename": "ha-jet-cloud.zip",
     "components": [
       "sensor"
     ],
