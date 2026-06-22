@@ -1,5 +1,7 @@
 # Home Assistant JET Cloud Integration
 
+![](https://img.shields.io/badge/dynamic/json?color=41BDF5&logo=home-assistant&label=integration%20usage&suffix=%20installs&cacheSeconds=15600&url=https://analytics.home-assistant.io/custom_integrations.json&query=$.ha_jet_cloud.total)
+
 A custom integration for Home Assistant to monitor JET Cloud microinverters. This integration connects directly to the JET Cloud API to pull real-time telemetry, including voltage, current, and total energy production.
 
 ## ⚠️ Disclaimer
