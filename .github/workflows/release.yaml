@@ -16,8 +16,8 @@ jobs:
 
       - name: Package Integration Directory
         run: |
-          cd custom_components
-          zip -r ../ha-jet-cloud.zip jet_cloud/
+          cd custom_components/jet_cloud
+          zip -r ../../ha-jet-cloud.zip .
 
       - name: Upload Zip to Release
         uses: softprops/action-gh-release@v2
