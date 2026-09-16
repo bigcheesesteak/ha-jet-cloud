@@ -3,8 +3,5 @@
     "render_readme": true,
     "zip_release": true,
     "filename": "ha-jet-cloud.zip",
-    "components": [
-      "sensor"
-    ],
     "iot_class": "Cloud Polling"
   }
