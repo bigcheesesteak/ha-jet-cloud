@@ -2,6 +2,5 @@
     "name": "JET Cloud Inverter",
     "render_readme": true,
     "zip_release": true,
-    "filename": "ha-jet-cloud.zip",
-    "iot_class": "Cloud Polling"
+    "filename": "ha-jet-cloud.zip"
   }
