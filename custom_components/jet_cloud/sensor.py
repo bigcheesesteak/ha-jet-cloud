@@ -1,3 +1,4 @@
+import re
 from dataclasses import dataclass
 from typing import Dict, List, Optional
 
@@ -26,6 +27,23 @@ from .const import DOMAIN
 @dataclass
 class JetCloudSensorEntityDescription(SensorEntityDescription):
     data_key: str = ""
+
+PV_KEY_PATTERN: re.Pattern = re.compile(r"^pv(\d+)_(power|voltage|current)$")
+
+PV_SENSOR_KWARGS: Dict[str, Dict] = {
+    "power": {
+        "native_unit_of_measurement": UnitOfPower.WATT,
+        "device_class": SensorDeviceClass.POWER,
+    },
+    "voltage": {
+        "native_unit_of_measurement": UnitOfElectricPotential.VOLT,
+        "device_class": SensorDeviceClass.VOLTAGE,
+    },
+    "current": {
+        "native_unit_of_measurement": UnitOfElectricCurrent.AMPERE,
+        "device_class": SensorDeviceClass.CURRENT,
+    },
+}
 
 SENSOR_TYPES: tuple[JetCloudSensorEntityDescription, ...] = (
     JetCloudSensorEntityDescription(
@@ -77,52 +95,12 @@ SENSOR_TYPES: tuple[JetCloudSensorEntityDescription, ...] = (
         state_class=SensorStateClass.MEASUREMENT,
     ),
     JetCloudSensorEntityDescription(
-        key="pv1_power",
-        name="PV1 Power",
-        data_key="pv1_power",
-        native_unit_of_measurement=UnitOfPower.WATT,
-        device_class=SensorDeviceClass.POWER,
-        state_class=SensorStateClass.MEASUREMENT,
-    ),
-    JetCloudSensorEntityDescription(
-        key="pv1_voltage",
-        name="PV1 Voltage",
-        data_key="pv1_voltage",
-        native_unit_of_measurement=UnitOfElectricPotential.VOLT,
-        device_class=SensorDeviceClass.VOLTAGE,
-        state_class=SensorStateClass.MEASUREMENT,
-    ),
-    JetCloudSensorEntityDescription(
-        key="pv1_current",
-        name="PV1 Current",
-        data_key="pv1_current",
-        native_unit_of_measurement=UnitOfElectricCurrent.AMPERE,
-        device_class=SensorDeviceClass.CURRENT,
-        state_class=SensorStateClass.MEASUREMENT,
-    ),
-    JetCloudSensorEntityDescription(
-        key="pv2_power",
-        name="PV2 Power",
-        data_key="pv2_power",
-        native_unit_of_measurement=UnitOfPower.WATT,
-        device_class=SensorDeviceClass.POWER,
-        state_class=SensorStateClass.MEASUREMENT,
-    ),
-    JetCloudSensorEntityDescription(
-        key="pv2_voltage",
-        name="PV2 Voltage",
-        data_key="pv2_voltage",
-        native_unit_of_measurement=UnitOfElectricPotential.VOLT,
-        device_class=SensorDeviceClass.VOLTAGE,
-        state_class=SensorStateClass.MEASUREMENT,
-    ),
-    JetCloudSensorEntityDescription(
-        key="pv2_current",
-        name="PV2 Current",
-        data_key="pv2_current",
-        native_unit_of_measurement=UnitOfElectricCurrent.AMPERE,
-        device_class=SensorDeviceClass.CURRENT,
-        state_class=SensorStateClass.MEASUREMENT,
+        key="total_energy",
+        name="Total Energy Generated",
+        data_key="total_energy",
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+        device_class=SensorDeviceClass.ENERGY,
+        state_class=SensorStateClass.TOTAL_INCREASING,
     ),
 )
 
@@ -132,11 +110,34 @@ async def async_setup_entry(
     coordinator: DataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
     entities: List[JetCloudSensor] = []
 
-    for device_sn in coordinator.data.keys():
+    for device_sn, device_data in coordinator.data.items():
         for description in SENSOR_TYPES:
+            entities.append(JetCloudSensor(coordinator, device_sn, description))
+        for description in _pv_sensor_descriptions(device_data):
             entities.append(JetCloudSensor(coordinator, device_sn, description))
 
     async_add_entities(entities)
+
+
+def _pv_sensor_descriptions(device_data: Dict[str, float]) -> List[JetCloudSensorEntityDescription]:
+    """Create PV sensors for PV1, PV2 and any further PV input the inverter reports."""
+    descriptions: List[JetCloudSensorEntityDescription] = []
+    always_present = {f"pv{n}_{kind}" for n in (1, 2) for kind in PV_SENSOR_KWARGS}
+    for data_key in sorted(always_present | set(device_data)):
+        match: Optional[re.Match] = PV_KEY_PATTERN.match(data_key)
+        if not match:
+            continue
+        pv_number, kind = match.groups()
+        descriptions.append(
+            JetCloudSensorEntityDescription(
+                key=data_key,
+                name=f"PV{pv_number} {kind.capitalize()}",
+                data_key=data_key,
+                state_class=SensorStateClass.MEASUREMENT,
+                **PV_SENSOR_KWARGS[kind],
+            )
+        )
+    return descriptions
 
 
 class JetCloudSensor(CoordinatorEntity, SensorEntity):

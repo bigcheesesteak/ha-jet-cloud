@@ -104,15 +104,35 @@ class JetCloudClient:
         except aiohttp.ClientError as err:
             raise JetCloudApiError(f"Connection error calling {endpoint}: {err}")
 
-    async def get_devices(self) -> List[str]:
+    async def get_devices(self) -> List[Dict[str, Any]]:
         payload: Dict[str, int] = {"pageNow": 1, "pageSize": 99}
         data: Dict[str, Any] = await self._async_request("/plant/getPlantPage", payload, "application/json;charset=UTF-8")
-        
-        device_sns: List[str] = []
+
+        devices: List[Dict[str, Any]] = []
         plants: List[Dict[str, Any]] = data.get("obj", {}).get("dataList", [])
         for plant in plants:
-            device_sns.extend(plant.get("deviceSnList", []))
-        return device_sns
+            devices.extend(await self._get_plant_devices(plant["id"]))
+        return devices
+
+    async def _get_plant_devices(self, plant_id: int) -> List[Dict[str, Any]]:
+        payload: Dict[str, Any] = {
+            "pageNow": 1,
+            "pageSize": 99,
+            "map": {"searchField": "", "type": 1, "plantId": plant_id, "statusType": -1},
+        }
+        data: Dict[str, Any] = await self._async_request("/device/getDevicePage", payload, "application/json;charset=UTF-8")
+
+        devices: List[Dict[str, Any]] = []
+        for device in data.get("obj", {}).get("dataList", []):
+            total_energy: Optional[float] = None
+            if isinstance(device.get("totalEnergy"), (int, float)):
+                total_energy = float(device["totalEnergy"])
+            devices.append({
+                "sn": device["deviceSn"],
+                "device_type": device.get("deviceType", 57),
+                "total_energy": total_energy,
+            })
+        return devices
 
     async def get_device_telemetry(self, device_sn: str, device_type: int = 57) -> Dict[str, float]:
         payload: Dict[str, Any] = {

@@ -1,5 +1,5 @@
 import logging
-from typing import Dict, List
+from typing import Any, Dict, List
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
@@ -18,10 +18,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     async def async_update_data() -> Dict[str, Dict[str, float]]:
         try:
-            device_sns: List[str] = await client.get_devices()
+            devices: List[Dict[str, Any]] = await client.get_devices()
             telemetry_data: Dict[str, Dict[str, float]] = {}
-            for sn in device_sns:
-                telemetry_data[sn] = await client.get_device_telemetry(sn)
+            for device in devices:
+                sn: str = device["sn"]
+                telemetry_data[sn] = await client.get_device_telemetry(sn, device["device_type"])
+                if device["total_energy"] is not None:
+                    telemetry_data[sn]["total_energy"] = device["total_energy"]
             return telemetry_data
         except Exception as err:
             raise UpdateFailed(f"Error fetching JetCloud data: {err}")

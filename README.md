@@ -14,8 +14,8 @@ This software is provided "as is", without warranty of any kind. It relies on un
 ---
 
 ## Features
-* **Energy Dashboard Ready**: Provides a strictly accumulating `Energy Generated Today` sensor.
-* **Granular Telemetry**: Tracks individual PV string performance (Voltage, Current, Power).
+* **Energy Dashboard Ready**: Provides a strictly accumulating `Energy Generated Today` sensor and a lifetime `Total Energy Generated` sensor.
+* **Granular Telemetry**: Tracks individual PV string performance (Voltage, Current, Power) for every PV input the inverter reports (PV1, PV2, PV3, ...).
 * **UI Configuration**: Fully supports Home Assistant Config Flow. No YAML required.
 
 ## Installation
